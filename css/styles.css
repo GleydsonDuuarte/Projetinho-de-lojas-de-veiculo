@@ -600,7 +600,7 @@ footer {
     color: white;
     font-size: 2rem;
     cursor: pointer;
-    z-index: 10;
+    z-index: 1000; /* AUMENTE O z-index */
     background-color: rgba(0,0,0,0.5);
     width: 40px;
     height: 40px;
@@ -627,6 +627,8 @@ footer {
     display: flex;
     align-items: center;
     gap: 15px;
+    position: relative;
+    z-index: 900; /* z-index MENOR que o botão fechar */
 }
 
 .nav-btn {
@@ -641,6 +643,8 @@ footer {
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s;
+    position: relative;
+    z-index: 900; /* z-index consistente */
 }
 
 .nav-btn:hover:not(:disabled) {
