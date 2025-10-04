@@ -249,21 +249,22 @@
     <div class="gallery-modal" id="galleryModal">
         <div class="modal-content">
             <span class="close-modal" id="closeModal">&times;</span>
+            
             <div class="modal-header">
-                <h3 id="modalCarName"></h3>
+                <h3 id="modalCarName">Chevrolet Classic LS</h3>
+                
+                <!-- CONTROLES DE NAVEGAÇÃO AQUI -->
+                <div class="modal-nav">
+                    <button class="nav-btn prev-btn" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="image-counter" id="imageCounter">1/5</span>
+                    <button class="nav-btn next-btn" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
-
-            <!-- MOVER o modal-nav para FORA do header -->
-            <div class="modal-nav">
-                <button class="nav-btn prev-btn" id="prevBtn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <span class="image-counter" id="imageCounter"></span>
-                <button class="nav-btn next-btn" id="nextBtn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-            </div>
+            
             <div class="modal-body">
                 <div class="main-image-container">
                     <img id="mainImage" src="" alt="">
