@@ -625,34 +625,35 @@ footer {
 }
 
 .modal-nav {
-    /* REMOVA display: flex e align-items: center */
     position: absolute;
     top: 50%;
     left: 0;
     right: 0;
     transform: translateY(-50%);
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 0 20px;
+    gap: 20px;
     z-index: 900;
-    pointer-events: none; /* Permite clicar através do container */
+    pointer-events: none;
 }
 
 .nav-btn {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.7);
     color: white;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.3s;
-    pointer-events: auto; /* Permite clicar nos botões */
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    pointer-events: auto;
     z-index: 901;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 /* Posicionamento específico das setas */
@@ -665,7 +666,14 @@ footer {
 }
 
 .image-counter {
-    font-weight: 600;
+    /* REMOVA position, bottom, left, transform */
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 902;
+    pointer-events: auto;
 }
 
 .modal-body {
