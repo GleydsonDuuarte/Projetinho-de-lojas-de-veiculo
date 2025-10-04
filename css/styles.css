@@ -600,7 +600,7 @@ footer {
     color: white;
     font-size: 2rem;
     cursor: pointer;
-    z-index: 1000; /* AUMENTE O z-index */
+    z-index: 1000;
     background-color: rgba(0,0,0,0.5);
     width: 40px;
     height: 40px;
@@ -617,6 +617,7 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative; /* Adicione esta linha */
 }
 
 .modal-header h3 {
@@ -624,11 +625,18 @@ footer {
 }
 
 .modal-nav {
+    /* REMOVA display: flex e align-items: center */
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    position: relative;
-    z-index: 900; /* z-index MENOR que o botão fechar */
+    padding: 0 20px;
+    z-index: 900;
+    pointer-events: none; /* Permite clicar através do container */
 }
 
 .nav-btn {
@@ -643,17 +651,17 @@ footer {
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s;
-    position: relative;
-    z-index: 900; /* z-index consistente */
+    pointer-events: auto; /* Permite clicar nos botões */
+    z-index: 901;
 }
 
-.nav-btn:hover:not(:disabled) {
-    background-color: rgba(255,255,255,0.3);
+/* Posicionamento específico das setas */
+.prev-btn {
+    margin-left: 0;
 }
 
-.nav-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.next-btn {
+    margin-right: 0;
 }
 
 .image-counter {
