@@ -224,8 +224,9 @@ function updateVehicleSelect(vehicles) {
     // Adicionar novos veículos
     vehicles.forEach(vehicle => {
         const option = document.createElement('option');
-        option.value = vehicle.id;
+        option.value = vehicle.name; // Mudar para o nome em vez do ID
         option.textContent = `${vehicle.name} - R$ ${vehicle.price}`;
+        option.setAttribute('data-id', vehicle.id); // Manter ID como data attribute
         vehicleSelect.appendChild(option);
     });
 }
