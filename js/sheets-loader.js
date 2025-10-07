@@ -1,3 +1,7 @@
+// sheets-loader.js
+// Carrega os dados da planilha e popula a seção de modelos
+// Mantive cache local simples e fallback direto para Google Sheets
+
 // Configuração - URLs da API
 const LOCAL_SHEETS_URL = '/.netlify/functions/sheets-proxy';
 const FALLBACK_SHEETS_URL = `https://docs.google.com/spreadsheets/d/1oLi9rBgMJmQxnluvO65RypDo6nD3zUxWDSdN6eQJoTs/gviz/tq?tqx=out:json`;
@@ -21,32 +25,32 @@ async function fetchVehiclesFromSheet() {
 
     try {
         showLoadingState();
-        
+
         // Tentar primeiro a função Netlify (mais confiável)
         let response = await fetch(LOCAL_SHEETS_URL);
-        
+
         if (!response.ok) {
             // Se falhar, tentar diretamente do Google Sheets
             console.warn('Netlify Function failed, trying direct Google Sheets...');
             response = await fetch(FALLBACK_SHEETS_URL);
-            
+
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
-            
+
             const text = await response.text();
             const json = JSON.parse(text.substring(47).slice(0, -2));
             const vehicles = parseSheetData(json);
-            
+
             vehiclesCache = vehicles;
             lastFetchTime = Date.now();
             hideLoadingState();
             return vehicles;
         }
-        
+
         // Processar resposta da Netlify Function
         const data = await response.json();
-        
+
         if (data.success) {
             vehiclesCache = data.data;
             lastFetchTime = Date.now();
@@ -55,7 +59,7 @@ async function fetchVehiclesFromSheet() {
         } else {
             throw new Error(data.error || 'Erro desconhecido');
         }
-        
+
     } catch (error) {
         console.error('Erro ao carregar dados:', error);
         showErrorState();
@@ -67,15 +71,15 @@ async function fetchVehiclesFromSheet() {
 function parseSheetData(jsonData) {
     const vehicles = [];
     const rows = jsonData.table.rows;
-    
+
     // Pular o cabeçalho (primeira linha)
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         const cell = row.c;
-        
+
         // Verificar se a linha tem dados
         if (!cell || cell.length === 0 || !cell[0] || !cell[0].v) continue;
-        
+
         try {
             const vehicle = {
                 id: cell[0]?.v || i,
@@ -89,17 +93,17 @@ function parseSheetData(jsonData) {
                 gallery: parseGallery(cell[8]?.v || ''),
                 features: parseFeatures(cell[9]?.v || '')
             };
-            
+
             // Validar dados mínimos
             if (vehicle.name && vehicle.price && vehicle.image) {
                 vehicles.push(vehicle);
             }
-            
+
         } catch (error) {
             console.warn(`Erro ao processar linha ${i + 1}:`, error);
         }
     }
-    
+
     return vehicles;
 }
 
@@ -118,10 +122,10 @@ function formatPrice(price) {
     if (typeof price === 'string' && price.includes(',')) {
         return price;
     }
-    
+
     const num = parseFloat(price);
     if (isNaN(num)) return price;
-    
+
     return num.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -130,14 +134,14 @@ function formatPrice(price) {
 
 function formatKM(km) {
     if (!km) return '0';
-    
+
     if (typeof km === 'string' && km.includes('.')) {
         return km;
     }
-    
+
     const num = parseInt(km);
     if (isNaN(num)) return km;
-    
+
     return num.toLocaleString('pt-BR');
 }
 
@@ -146,7 +150,7 @@ function showLoadingState() {
     const loading = document.getElementById('loadingMessage');
     const grid = document.getElementById('modelsGrid');
     const error = document.getElementById('errorMessage');
-    
+
     if (loading) loading.style.display = 'block';
     if (grid) grid.style.display = 'none';
     if (error) error.style.display = 'none';
@@ -155,7 +159,7 @@ function showLoadingState() {
 function hideLoadingState() {
     const loading = document.getElementById('loadingMessage');
     const grid = document.getElementById('modelsGrid');
-    
+
     if (loading) loading.style.display = 'none';
     if (grid) grid.style.display = 'grid';
 }
@@ -164,7 +168,7 @@ function showErrorState() {
     const loading = document.getElementById('loadingMessage');
     const grid = document.getElementById('modelsGrid');
     const error = document.getElementById('errorMessage');
-    
+
     if (loading) loading.style.display = 'none';
     if (grid) grid.style.display = 'none';
     if (error) error.style.display = 'block';
@@ -174,18 +178,24 @@ function showErrorState() {
 async function loadModelsSection() {
     const modelsGrid = document.getElementById('modelsGrid');
     const vehicleSelect = document.getElementById('veiculo');
-    
+
     if (!modelsGrid) return;
-    
+
     showLoadingState();
-    
+
     try {
         const vehicles = await fetchVehiclesFromSheet();
-        
+
+        // Se quiser uso em outro lugar, vehicles fica disponível globalmente
+        window._vehiclesLoaded = vehicles;
+
+        // Inicia troca automática da imagem "Sobre Nós" (somente imagens principais)
+        startAboutImageRotation(vehicles);
+
         // Limpar grid
         modelsGrid.innerHTML = '';
-        
-        if (vehicles.length === 0) {
+
+        if (!vehicles || vehicles.length === 0) {
             modelsGrid.innerHTML = `
                 <div class="no-vehicles">
                     <i class="fas fa-car"></i>
@@ -195,16 +205,16 @@ async function loadModelsSection() {
             `;
             return;
         }
-        
+
         // Adicionar modelos ao grid
         vehicles.forEach((model, index) => {
             const modelCard = createModelCard(model, index);
             modelsGrid.appendChild(modelCard);
         });
-        
+
         // Atualizar select do formulário
         updateVehicleSelect(vehicles);
-        
+
     } catch (error) {
         console.error('Erro ao carregar modelos:', error);
         showErrorState();
@@ -215,18 +225,18 @@ async function loadModelsSection() {
 function updateVehicleSelect(vehicles) {
     const vehicleSelect = document.getElementById('veiculo');
     if (!vehicleSelect) return;
-    
+
     // Limpar opções existentes (exceto a primeira)
     while (vehicleSelect.options.length > 1) {
         vehicleSelect.remove(1);
     }
-    
+
     // Adicionar novos veículos
     vehicles.forEach(vehicle => {
         const option = document.createElement('option');
-        option.value = vehicle.name; // Mudar para o nome em vez do ID
+        option.value = vehicle.name;
         option.textContent = `${vehicle.name} - R$ ${vehicle.price}`;
-        option.setAttribute('data-id', vehicle.id); // Manter ID como data attribute
+        option.setAttribute('data-id', vehicle.id);
         vehicleSelect.appendChild(option);
     });
 }
@@ -235,62 +245,61 @@ function updateVehicleSelect(vehicles) {
 function createModelCard(model, index) {
     const card = document.createElement('div');
     card.className = 'model-card';
-    
+
     const hasGallery = model.gallery && model.gallery.length > 0;
     const galleryCount = hasGallery ? model.gallery.length : 0;
-    
+
     card.innerHTML = `
         ${hasGallery ? `
             <div class="gallery-badge">
                 <i class="fas fa-images"></i> ${galleryCount} foto${galleryCount > 1 ? 's' : ''}
             </div>
         ` : ''}
-        
+
         <img src="${model.image}" alt="${model.name}" class="model-image" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60'">
-        
+
         <div class="model-info">
             <h3 class="model-name">${model.name}</h3>
             <div class="model-price">R$ ${model.price}</div>
-            
+
             <div class="model-details">
                 <span><i class="fas fa-calendar"></i> ${model.year}</span>
                 <span><i class="fas fa-tachometer-alt"></i> ${model.km} km</span>
                 ${model.category ? `<span><i class="fas fa-car"></i> ${model.category}</span>` : ''}
             </div>
-            
+
             ${model.features && model.features.length > 0 ? `
                 <div class="model-features">
                     ${model.features.map(feature => `<span>${feature}</span>`).join('')}
                 </div>
             ` : ''}
-            
+
             <div class="model-location">
                 <i class="fas fa-map-marker-alt"></i> 
                 <a href="https://maps.google.com/?q=Rua+das+Fronteiras+77+Caucaia+CE" target="_blank" class="address-link">${model.location}</a>
             </div>
-            
+
             ${hasGallery ? `
                 <div class="view-gallery">
                     <i class="fas fa-expand"></i> Ver Galeria
                 </div>
             ` : ''}
-            
+
             <a href="#contato" class="btn btn-interest" data-vehicle="${model.name}" style="margin-top: 15px; display: block; text-align: center;">
                 Tenho Interesse
             </a>
         </div>
     `;
-    
+
     // Evento para abrir galeria - apenas no card, não no botão
     if (hasGallery) {
         card.addEventListener('click', (e) => {
-            // Não abrir galeria se clicar no botão "Tenho Interesse"
             if (!e.target.closest('.btn-interest')) {
                 openGallery(model, index);
             }
         });
     }
-    
+
     return card;
 }
 
@@ -298,20 +307,22 @@ function createModelCard(model, index) {
 function openGallery(model, index) {
     currentModelIndex = index;
     currentImageIndex = 0;
-    
+
     const modal = document.getElementById('galleryModal');
     const modalCarName = document.getElementById('modalCarName');
     const mainImage = document.getElementById('mainImage');
-    
+
+    if (!modal || !modalCarName || !mainImage) return;
+
     modalCarName.textContent = model.name;
-    
+
     currentGalleryImages = model.gallery && model.gallery.length > 0 ? model.gallery : [model.image];
     mainImage.src = currentGalleryImages[0];
-    
+
     loadThumbnails(currentGalleryImages, model.name);
     updateImageCounter();
     updateNavigationButtons();
-    
+
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
@@ -319,8 +330,9 @@ function openGallery(model, index) {
 // Funções da galeria
 function loadThumbnails(images, modelName) {
     const thumbnailsContainer = document.getElementById('thumbnails');
+    if (!thumbnailsContainer) return;
     thumbnailsContainer.innerHTML = '';
-    
+
     images.forEach((image, index) => {
         const thumbnail = document.createElement('img');
         thumbnail.src = image;
@@ -330,7 +342,7 @@ function loadThumbnails(images, modelName) {
         thumbnail.onerror = function() {
             this.src = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60';
         };
-        
+
         thumbnailsContainer.appendChild(thumbnail);
     });
 }
@@ -338,7 +350,8 @@ function loadThumbnails(images, modelName) {
 function changeImage(index) {
     currentImageIndex = index;
     const mainImage = document.getElementById('mainImage');
-    
+
+    if (!mainImage) return;
     mainImage.src = currentGalleryImages[index];
     updateImageCounter();
     updateThumbnails();
@@ -346,20 +359,16 @@ function changeImage(index) {
 }
 
 function prevImage() {
-    if (currentImageIndex > 0) {
-        changeImage(currentImageIndex - 1);
-    }
+    if (currentImageIndex > 0) changeImage(currentImageIndex - 1);
 }
 
 function nextImage() {
-    if (currentImageIndex < currentGalleryImages.length - 1) {
-        changeImage(currentImageIndex + 1);
-    }
+    if (currentImageIndex < currentGalleryImages.length - 1) changeImage(currentImageIndex + 1);
 }
 
 function updateImageCounter() {
     const imageCounter = document.getElementById('imageCounter');
-    imageCounter.textContent = `${currentImageIndex + 1} / ${currentGalleryImages.length}`;
+    if (imageCounter) imageCounter.textContent = `${currentImageIndex + 1} / ${currentGalleryImages.length}`;
 }
 
 function updateThumbnails() {
@@ -372,18 +381,54 @@ function updateThumbnails() {
 function updateNavigationButtons() {
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    
-    prevBtn.disabled = currentImageIndex === 0;
-    nextBtn.disabled = currentImageIndex === currentGalleryImages.length - 1;
+
+    if (prevBtn) prevBtn.disabled = currentImageIndex === 0;
+    if (nextBtn) nextBtn.disabled = currentImageIndex === currentGalleryImages.length - 1;
 }
 
-// Inicializar quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
-    loadModelsSection();
-    
-    // Configurar botão de tentar novamente
-    const retryButton = document.getElementById('retryButton');
-    if (retryButton) {
-        retryButton.addEventListener('click', loadModelsSection);
+/* ======== INCLUSÃO: TROCA AUTOMÁTICA E ALEATÓRIA DE IMAGENS NA SEÇÃO "SOBRE NÓS" ======== */
+/* Esse bloco substitui a imagem inicial (do HTML) pela primeira imagem do estoque assim que os veículos são carregados,
+   e em seguida alterna aleatoriamente a cada 4s entre as imagens principais (coluna 'image'). */
+
+function startAboutImageRotation(vehicles) {
+    try {
+        const aboutImage = document.querySelector('.about-image img');
+        if (!aboutImage || !vehicles || vehicles.length === 0) return;
+
+        // Coleta apenas as imagens principais válidas
+        const allImages = vehicles
+            .map(v => v.image)
+            .filter(url => url && url.startsWith('http'));
+
+        if (allImages.length === 0) return;
+
+        let currentIndex = 0;
+
+        // Troca imediata: substitui a imagem inicial assim que possível
+        aboutImage.src = allImages[currentIndex];
+
+        // Define transição suave (garante que exista)
+        aboutImage.style.transition = 'opacity 1s ease-in-out';
+        aboutImage.style.opacity = 1;
+
+        // Intervalo de troca aleatória
+        setInterval(() => {
+            aboutImage.style.opacity = 0; // fade-out
+
+            setTimeout(() => {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * allImages.length);
+                } while (newIndex === currentIndex && allImages.length > 1);
+
+                currentIndex = newIndex;
+                aboutImage.src = allImages[currentIndex];
+                aboutImage.style.opacity = 1; // fade-in
+            }, 1000); // espera o fade-out terminar
+        }, 4000); // troca a cada 4 segundos
+    } catch (err) {
+        console.error('Erro na rotação de imagens do Sobre Nós:', err);
     }
-});
+}
+
+/* ======== FIM DA INCLUSÃO ======== */

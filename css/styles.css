@@ -212,7 +212,13 @@ section {
     width: 100%;
     height: auto;
     display: block;
-    transition: transform 0.5s;
+    border-radius: 10px;
+    transition: opacity 1s ease-in-out, transform 0.5s;
+    opacity: 1;
+}
+
+.about-image img.fade {
+    opacity: 0;
 }
 
 .about-image img:hover {

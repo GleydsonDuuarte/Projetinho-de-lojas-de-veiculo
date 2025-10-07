@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Caucaia Autos - Compra, venda, troca e financiamento de veículos. Mais de 20 anos de tradição no mercado automotivo.">
-    <meta name="keywords" content="carros, veículos, compra, venda, troca, financiamento, Caucaia, concessionária">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Caucaia Autos - Compra, venda, troca e financiamento de veículos. Mais de 20 anos de tradição no mercado automotivo." />
+    <meta name="keywords" content="carros, veículos, compra, venda, troca, financiamento, Caucaia, concessionária" />
     <title>Caucaia Autos - Compra, Venda, Troca e Financia</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
     <!-- Header -->
@@ -69,29 +73,32 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- imagem que será alternada pelo JS -->
                     <div class="about-image">
-                        <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Concessionária Caucaia Autos">
+                        <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                             alt="Concessionária Caucaia Autos" />
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Seção de Modelos com Galeria -->
+        <!-- Modelos -->
         <section class="models-section" id="modelos">
             <div class="container">
                 <h2 class="section-title">Nossos Modelos</h2>
                 <p class="section-subtitle">Clique em qualquer veículo para ver mais fotos</p>
-                
+
                 <div class="loading-message" id="loadingMessage">
                     <i class="fas fa-spinner fa-spin"></i> Carregando veículos...
                 </div>
-                
+
                 <div class="models-grid" id="modelsGrid">
                     <!-- Os modelos serão carregados automaticamente da planilha -->
                 </div>
-                
+
                 <div class="error-message" id="errorMessage" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i> 
+                    <i class="fas fa-exclamation-triangle"></i>
                     <p>Erro ao carregar os veículos. Por favor, tente novamente mais tarde.</p>
                     <button class="btn" id="retryButton">Tentar Novamente</button>
                 </div>
@@ -115,6 +122,7 @@
                                     <p><a href="https://maps.google.com/?q=Rua+das+Fronteiras+77+Caucaia+CE" target="_blank" class="address-link">Rua das Fronteiras N°77, Caucaia - CE</a></p>
                                 </div>
                             </div>
+
                             <div class="contact-item">
                                 <div class="contact-icon">
                                     <i class="fas fa-phone"></i>
@@ -125,6 +133,7 @@
                                     <p><a href="tel:+5585988713235" class="phone-link">(85) 98871-3235</a></p>
                                 </div>
                             </div>
+
                             <div class="contact-item">
                                 <div class="contact-icon">
                                     <i class="fas fa-clock"></i>
@@ -135,6 +144,7 @@
                                     <p>Sábado: 8h às 12h</p>
                                 </div>
                             </div>
+
                             <div class="contact-item">
                                 <div class="contact-icon">
                                     <i class="fas fa-history"></i>
@@ -145,48 +155,57 @@
                                 </div>
                             </div>
                         </div>
+
                         <h3>Siga-nos</h3>
                         <div class="social-links">
                             <a href="https://www.facebook.com/seu_link" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                             <a href="https://www.instagram.com/caucaia_autos?igsh=MTN6NzJham9mbmJjNw==" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                             <a href="https://wa.me/5585992813532" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                         </div>
+
                         <div class="map" style="margin-top: 30px;">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.391646509145!2d-38.57424992501801!3d-3.722830996237743!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c74a4338e96e2d%3A0x5aa7c8b4b5b5b5b5!2sR.%20das%20Fronteiras%2C%2077%20-%20Caucaia%2C%20CE%2C%2061618-000!5e0!3m2!1spt-BR!2sbr!4v1690000000000!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" title="Localização da Caucaia Autos"></iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.391646509145!2d-38.57424992501801!3d-3.722830996237743!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c74a4338e96e2d%3A0x5aa7c8b4b5b5b5b5!2sR.%20das%20Fronteiras%2C%2077%20-%20Caucaia%2C%20CE%2C%2061618-000!5e0!3m2!1spt-BR!2sbr!4v1690000000000!5m2!1spt-BR!2sbr"
+                                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" title="Localização da Caucaia Autos"></iframe>
                         </div>
                     </div>
+
                     <div class="contact-form">
                         <h3>Envie uma Mensagem</h3>
                         <form name="contato" method="POST" netlify action="/sucesso.html">
                             <input type="hidden" name="form-name" value="contato">
-                            
+
                             <!-- Honeypot field -->
                             <div class="hidden">
-                                <label>Não preencha este campo: <input name="bot-field"></label>
+                                <label>Não preencha este campo: <input name="bot-field" /></label>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="nome">Nome Completo *</label>
-                                <input type="text" id="nome" name="nome" required>
+                                <input type="text" id="nome" name="nome" required />
                             </div>
+
                             <div class="form-group">
                                 <label for="telefone">Telefone *</label>
-                                <input type="tel" id="telefone" name="telefone" required>
+                                <input type="tel" id="telefone" name="telefone" required />
                             </div>
+
                             <div class="form-group">
                                 <label for="email">E-mail</label>
-                                <input type="email" id="email" name="email">
+                                <input type="email" id="email" name="email" />
                             </div>
+
                             <div class="form-group">
                                 <label for="veiculo">Veículo de Interesse</label>
                                 <select id="veiculo" name="veiculo">
                                     <option value="">Selecione um veículo</option>
                                 </select>
                             </div>
+
                             <div class="form-group">
                                 <label for="mensagem">Mensagem</label>
                                 <textarea id="mensagem" name="mensagem" placeholder="Descreva sua dúvida ou interesse..."></textarea>
                             </div>
+
                             <button type="submit" class="btn">Enviar Mensagem</button>
                         </form>
                     </div>
@@ -209,6 +228,7 @@
                         <span class="service-tag">Financia</span>
                     </div>
                 </div>
+
                 <div class="footer-column">
                     <h3>Links Rápidos</h3>
                     <ul>
@@ -218,6 +238,7 @@
                         <li><a href="#contato">Contato</a></li>
                     </ul>
                 </div>
+
                 <div class="footer-column">
                     <h3>Serviços</h3>
                     <ul>
@@ -227,6 +248,7 @@
                         <li><a href="#">Financiamento</a></li>
                     </ul>
                 </div>
+
                 <div class="footer-column">
                     <h3>Contato</h3>
                     <ul>
@@ -237,9 +259,10 @@
                     </ul>
                 </div>
             </div>
+
             <div class="copyright">
                 &copy; <span id="year"></span> Caucaia Autos. Todos os direitos reservados.
-                <br>
+                <br />
                 <small>Site criado por <strong>Gleydson de Almeida Duarte</strong></small>
             </div>
         </div>
@@ -249,31 +272,27 @@
     <div class="gallery-modal" id="galleryModal">
         <div class="modal-content">
             <span class="close-modal" id="closeModal">&times;</span>
-            
+
             <div class="modal-header">
                 <h3 id="modalCarName">Chevrolet Classic LS</h3>
-                
-                <!-- CONTROLES DE NAVEGAÇÃO AQUI -->
+
                 <div class="modal-nav">
-                    <button class="nav-btn prev-btn" id="prevBtn">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+                    <button class="nav-btn prev-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
                     <span class="image-counter" id="imageCounter">1/5</span>
-                    <button class="nav-btn next-btn" id="nextBtn">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <button class="nav-btn next-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
-            
+
             <div class="modal-body">
                 <div class="main-image-container">
-                    <img id="mainImage" src="" alt="">
+                    <img id="mainImage" src="" alt="" />
                 </div>
                 <div class="thumbnails" id="thumbnails"></div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts: sheets-loader primeiro (carrega dados), depois scripts gerais -->
     <script src="js/sheets-loader.js"></script>
     <script src="js/scripts.js"></script>
 </body>

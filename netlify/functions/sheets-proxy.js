@@ -24,23 +24,23 @@ exports.handler = async function(event, context) {
 
   try {
     console.log('Fetching data from Google Sheets...');
-    
+
     const response = await fetch(SHEET_URL);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const text = await response.text();
-    
+
     // Processar resposta do Google Sheets
     const jsonData = JSON.parse(text.substring(47).slice(0, -2));
-    
+
     // Estruturar os dados
     const vehicles = parseSheetData(jsonData);
-    
+
     console.log(`Successfully loaded ${vehicles.length} vehicles`);
-    
+
     return {
       statusCode: 200,
       headers,
@@ -54,7 +54,7 @@ exports.handler = async function(event, context) {
 
   } catch (error) {
     console.error('Error fetching from Google Sheets:', error);
-    
+
     return {
       statusCode: 500,
       headers,
@@ -70,16 +70,16 @@ exports.handler = async function(event, context) {
 // Função para processar os dados da planilha
 function parseSheetData(jsonData) {
   const vehicles = [];
-  const rows = jsonData.table.rows;
-  
+  const rows = jsonData.table && jsonData.table.rows ? jsonData.table.rows : [];
+
   // Pular o cabeçalho (primeira linha)
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     const cell = row.c;
-    
+
     // Verificar se a linha tem dados
-    if (!cell || cell.length === 0 || !cell[0] || !cell[0].v) continue;
-    
+    if (!cell || cell.length === 0 || !cell[0] || cell[0].v === undefined) continue;
+
     try {
       const vehicle = {
         id: cell[0]?.v || i,
@@ -93,17 +93,17 @@ function parseSheetData(jsonData) {
         gallery: parseGallery(cell[8]?.v || ''),
         features: parseFeatures(cell[9]?.v || '')
       };
-      
+
       // Validar dados mínimos
       if (vehicle.name && vehicle.price && vehicle.image) {
         vehicles.push(vehicle);
       }
-      
+
     } catch (error) {
       console.warn(`Erro ao processar linha ${i + 1}:`, error);
     }
   }
-  
+
   return vehicles;
 }
 
@@ -123,11 +123,11 @@ function formatPrice(price) {
   if (typeof price === 'string' && price.includes(',')) {
     return price;
   }
-  
+
   // Converter número para formato brasileiro
   const num = parseFloat(price);
   if (isNaN(num)) return price;
-  
+
   return num.toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
@@ -136,15 +136,15 @@ function formatPrice(price) {
 
 function formatKM(km) {
   if (!km) return '0';
-  
+
   // Se já estiver formatado, manter
   if (typeof km === 'string' && km.includes('.')) {
     return km;
   }
-  
+
   // Converter número para formato brasileiro
   const num = parseInt(km);
   if (isNaN(num)) return km;
-  
+
   return num.toLocaleString('pt-BR');
 }
